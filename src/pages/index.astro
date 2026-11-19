@@ -1,0 +1,320 @@
+---
+import { getCollection } from "astro:content";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import Datetime from "@/components/Datetime.astro";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getPostUrl } from "@/utils/getPostPaths";
+import config from "@/config";
+
+const { posts: postsConfig } = config;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+
+const posts = getSortedPosts(await getCollection("posts"));
+const homePath = getRelativeLocaleUrl(locale, "");
+const aboutPath = getRelativeLocaleUrl(locale, "about");
+const blogPath = getRelativeLocaleUrl(locale, "posts");
+
+const focus = [
+  {
+    title: "LLM & RAG applications",
+    text: "Retrieval pipelines and LLM workflows whose answers trace back to their sources.",
+  },
+  {
+    title: "Agent workflows",
+    text: "Agents that gather, consolidate and check information, evaluated on real data.",
+  },
+  {
+    title: "Computer vision in industry",
+    text: "Real-time vision and sensor fusion running on live production lines.",
+  },
+];
+
+// Add a project: copy one entry. Leave `url` out if there is nothing public to link to.
+const projects: {
+  title: string;
+  label: string;
+  summary: string;
+  tags: string[];
+  url?: string;
+}[] = [
+  {
+    title: "Real-Time Weld Quality Inspection",
+    label: "PhD research",
+    summary:
+      "Classifies weld quality from live video in real time, fused with sensor readings to catch faults cameras miss. I built the dataset from production runs and the synchronised video and sensor acquisition layer, and tested it on active assembly lines.",
+    tags: ["Python", "PyTorch", "OpenCV", "Sensor fusion"],
+  },
+  {
+    title: "Watch Party",
+    label: "Side project · 2026",
+    summary:
+      "A desktop app that lets a group watch a local video together in sync, with chat and reactions. Peer-to-peer rooms: one invite ticket, no server, no upload. Built by directing an agentic AI coding workflow while owning the architecture.",
+    tags: ["Rust", "iroh", "P2P", "Desktop"],
+  },
+  {
+    title: "Set: Card-Matching Puzzle",
+    label: "Side project · 2026",
+    summary:
+      "A web version of the card game Set. The engine deals valid boards and a solver checks every combination to find or verify sets in real time. Fully client-side.",
+    tags: ["TypeScript", "Cloudflare Pages"],
+  },
+  {
+    title: "Markdown Bilingual Preview",
+    label: "Open source · 2026",
+    summary:
+      "A VS Code extension that shows Markdown source and its AI translation side by side. Read-only, so it never writes back to your file.",
+    tags: ["VS Code", "JavaScript", "LLM"],
+    url: "https://github.com/foxnz/md-bilingual-preview",
+  },
+];
+
+const experience = [
+  {
+    role: "Machine Learning Engineer (PhD)",
+    org: "Lab for Industry 4.0, University of Auckland",
+    date: "Nov 2023 – now",
+  },
+  {
+    role: "Teaching Assistant",
+    org: "University of Auckland",
+    date: "Feb – Nov 2026",
+  },
+  {
+    role: "AI Engineer Intern",
+    org: "Agentic AI, Auckland",
+    date: "Aug – Oct 2026",
+  },
+  {
+    role: "Forward Deployed Engineer",
+    org: "BeeBee AI, Auckland",
+    date: "Aug 2026",
+  },
+];
+---
+
+<Layout>
+  <Header />
+  <main
+    id="main-content"
+    data-layout="index"
+    data-home-path={homePath}
+    class="app-layout"
+  >
+    <!-- Hero -->
+    <section
+      id="hero"
+      class="flex flex-col-reverse items-start gap-8 pt-12 pb-16 sm:flex-row sm:items-center sm:justify-between sm:pt-20"
+    >
+      <div class="max-w-xl">
+        <span
+          class="border-border text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm"
+        >
+          <span class="size-2 rounded-full bg-emerald-500"></span>
+          Open to AI engineering roles from Feb 2027
+        </span>
+        <h1
+          class="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl"
+        >
+          Mingming Zhang
+        </h1>
+        <p class="text-accent mt-3 text-lg font-semibold sm:text-xl">
+          AI Engineer · PhD researcher · Auckland, NZ
+        </p>
+        <p class="text-muted-foreground mt-5 text-lg leading-relaxed">
+          I build LLM applications, agent workflows and real-time computer
+          vision systems, and I care about checking that their output is
+          actually right.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href="#projects"
+            class="bg-accent text-accent-foreground rounded-lg px-5 py-2.5 font-semibold shadow-sm transition hover:opacity-90"
+          >
+            View projects
+          </a>
+          <a
+            href="#contact"
+            class="border-border hover:bg-muted rounded-lg border px-5 py-2.5 font-semibold transition"
+          >
+            Get in touch
+          </a>
+          <div class="ms-1"><Socials /></div>
+        </div>
+      </div>
+      <!-- shortcut: initials placeholder, swap for <img src="/avatar.jpg"> once there is a photo -->
+      <div
+        aria-hidden="true"
+        class="flex size-28 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 via-violet-500 to-sky-400 text-4xl font-bold text-white shadow-lg ring-4 ring-indigo-500/15 sm:size-44 sm:text-6xl"
+      >
+        MZ
+      </div>
+    </section>
+
+    <!-- Focus areas -->
+    <section class="grid gap-4 pb-16 sm:grid-cols-3">
+      {
+        focus.map(f => (
+          <div class="border-border bg-muted/50 rounded-xl border p-5">
+            <h2 class="font-semibold">{f.title}</h2>
+            <p class="text-muted-foreground mt-2 text-sm leading-relaxed">
+              {f.text}
+            </p>
+          </div>
+        ))
+      }
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="scroll-mt-8 pb-16">
+      <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Projects</h2>
+      <p class="text-muted-foreground mt-2">
+        Research and things I've built outside work.
+      </p>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2">
+        {
+          projects.map(p => (
+            <article class="border-border bg-background group flex flex-col rounded-2xl border p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <p class="text-accent text-xs font-semibold tracking-wider uppercase">
+                {p.label}
+              </p>
+              <h3 class="mt-2 text-lg font-semibold">
+                {p.url ? (
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener"
+                    class="hover:text-accent"
+                  >
+                    {p.title} ↗
+                  </a>
+                ) : (
+                  p.title
+                )}
+              </h3>
+              <p class="text-muted-foreground mt-3 grow text-sm leading-relaxed">
+                {p.summary}
+              </p>
+              <ul class="mt-5 flex flex-wrap gap-2">
+                {p.tags.map(tag => (
+                  <li class="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section class="pb-16">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+          Experience
+        </h2>
+        <a href={aboutPath} class="text-accent text-sm font-semibold">
+          Full background →
+        </a>
+      </div>
+      <ol class="border-border mt-8 ms-2 border-s">
+        {
+          experience.map(e => (
+            <li class="relative ps-6 pb-6 last:pb-0">
+              <span class="bg-accent ring-background absolute -start-[5px] top-2 size-2.5 rounded-full ring-4" />
+              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between">
+                <p class="font-semibold">{e.role}</p>
+                <p class="text-muted-foreground text-sm">{e.date}</p>
+              </div>
+              <p class="text-muted-foreground text-sm">{e.org}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- Writing -->
+    {
+      posts.length > 0 && (
+        <section class="pb-16">
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">
+              Writing
+            </h2>
+            <a href={blogPath} class="text-accent text-sm font-semibold">
+              All posts <IconArrowRight class="inline-block size-4" />
+            </a>
+          </div>
+          <ul class="mt-6 grid gap-4">
+            {posts.slice(0, postsConfig.perIndex).map(({ id, data, filePath }) => (
+              <li>
+                <a
+                  href={getPostUrl(id, filePath, locale)}
+                  class="border-border hover:border-accent block rounded-xl border p-5 transition"
+                >
+                  <h3 class="font-semibold">{data.title}</h3>
+                  <p class="text-muted-foreground mt-1 text-sm">
+                    {data.description}
+                  </p>
+                  <div class="mt-2 text-sm">
+                    <Datetime
+                      pubDatetime={data.pubDatetime}
+                      modDatetime={data.modDatetime}
+                      timezone={data.timezone}
+                    />
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <!-- Contact -->
+    <section
+      id="contact"
+      class="mb-16 scroll-mt-8 rounded-2xl bg-linear-to-br from-indigo-600 to-violet-600 px-6 py-10 text-center text-white sm:px-12"
+    >
+      <h2 class="text-2xl font-bold sm:text-3xl">Let's talk</h2>
+      <p class="mx-auto mt-3 max-w-lg text-indigo-100">
+        I'm looking for AI engineering roles in New Zealand from February 2027.
+        The fastest way to reach me is email or LinkedIn.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <a
+          href="mailto:itsmingmingzhang@gmail.com"
+          class="rounded-lg bg-white px-5 py-2.5 font-semibold text-indigo-700 transition hover:bg-indigo-50"
+        >
+          Email me
+        </a>
+        <a
+          href="https://www.linkedin.com/in/mingming-zhangg/"
+          target="_blank"
+          rel="noopener"
+          class="rounded-lg border border-white/40 px-5 py-2.5 font-semibold transition hover:bg-white/10"
+        >
+          LinkedIn
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
+      ?.dataset;
+    const baseRoot = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+    if (indexLayout?.layout) {
+      sessionStorage.setItem("backUrl", indexLayout.homePath ?? baseRoot);
+    }
+  });
+</script>
