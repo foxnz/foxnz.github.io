@@ -10,6 +10,9 @@ import Datetime from "@/components/Datetime.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { getPostUrl } from "@/utils/getPostPaths";
 import config from "@/config";
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import jobsquirrelShot from "@/assets/projects/jobsquirrel.png";
 
 const { posts: postsConfig } = config;
 
@@ -42,14 +45,8 @@ const projects: {
   summary: string;
   tags: string[];
   url?: string;
+  image?: { src: ImageMetadata; alt: string };
 }[] = [
-  {
-    title: "Real-Time Weld Quality Inspection",
-    label: "PhD research",
-    summary:
-      "Classifies weld quality from live video in real time, fused with sensor readings to catch faults cameras miss. I built the dataset from production runs and the synchronised video and sensor acquisition layer, and tested it on active assembly lines.",
-    tags: ["Python", "PyTorch", "OpenCV", "Sensor fusion"],
-  },
   {
     title: "JobSquirrel",
     label: "Side project · 2026",
@@ -57,6 +54,17 @@ const projects: {
       "A Mac app and Chrome extension for keeping a job search in one place. One click saves a job ad, with its details read from the page and a full copy kept, into a local library with a board, tags, CVs and follow-up reminders. Reads New Zealand job, graduate and volunteer sites. Nothing leaves your Mac. Built by directing an agentic AI development workflow while owning the product and design decisions.",
     tags: ["TypeScript", "Electron", "Chrome extension", "Local-first"],
     url: "https://jobsquirrel.nz",
+    image: {
+      src: jobsquirrelShot,
+      alt: "The JobSquirrel window: folders and statuses on the left, saved jobs in the middle, and the selected job's details on the right.",
+    },
+  },
+  {
+    title: "Real-Time Weld Quality Inspection",
+    label: "PhD research",
+    summary:
+      "Classifies weld quality from live video in real time, fused with sensor readings to catch faults cameras miss. I built the dataset from production runs and the synchronised video and sensor acquisition layer, and tested it on active assembly lines.",
+    tags: ["Python", "PyTorch", "OpenCV", "Sensor fusion"],
   },
   {
     title: "Watch Party",
@@ -126,9 +134,7 @@ const experience = [
           <span class="size-2 rounded-full bg-emerald-500"></span>
           Open to AI engineering roles from Feb 2027
         </span>
-        <h1
-          class="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl"
-        >
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl">
           Mingming Zhang
         </h1>
         <p class="text-accent mt-3 text-lg font-semibold sm:text-xl">
@@ -187,34 +193,50 @@ const experience = [
       <div class="mt-8 grid gap-5 sm:grid-cols-2">
         {
           projects.map(p => (
-            <article class="border-border bg-background group flex flex-col rounded-2xl border p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <p class="text-accent text-xs font-semibold tracking-wider uppercase">
-                {p.label}
-              </p>
-              <h3 class="mt-2 text-lg font-semibold">
-                {p.url ? (
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener"
-                    class="hover:text-accent"
-                  >
-                    {p.title} ↗
-                  </a>
-                ) : (
-                  p.title
-                )}
-              </h3>
-              <p class="text-muted-foreground mt-3 grow text-sm leading-relaxed">
-                {p.summary}
-              </p>
-              <ul class="mt-5 flex flex-wrap gap-2">
-                {p.tags.map(tag => (
-                  <li class="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium">
-                    {tag}
-                  </li>
-                ))}
-              </ul>
+            <article
+              class:list={[
+                "border-border bg-background group flex flex-col rounded-2xl border p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md",
+                p.image && "sm:col-span-2 sm:flex-row sm:items-center sm:gap-8",
+              ]}
+            >
+              {p.image && (
+                <Image
+                  src={p.image.src}
+                  alt={p.image.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 640px) 560px, 100vw"
+                  class="border-border mb-5 w-full rounded-lg border sm:mb-0 sm:w-[55%] sm:shrink-0"
+                />
+              )}
+              <div class="flex grow flex-col">
+                <p class="text-accent text-xs font-semibold tracking-wider uppercase">
+                  {p.label}
+                </p>
+                <h3 class="mt-2 text-lg font-semibold">
+                  {p.url ? (
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener"
+                      class="hover:text-accent"
+                    >
+                      {p.title} ↗
+                    </a>
+                  ) : (
+                    p.title
+                  )}
+                </h3>
+                <p class="text-muted-foreground mt-3 grow text-sm leading-relaxed">
+                  {p.summary}
+                </p>
+                <ul class="mt-5 flex flex-wrap gap-2">
+                  {p.tags.map(tag => (
+                    <li class="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </article>
           ))
         }
@@ -231,7 +253,7 @@ const experience = [
           Full background →
         </a>
       </div>
-      <ol class="border-border mt-8 ms-2 border-s">
+      <ol class="border-border ms-2 mt-8 border-s">
         {
           experience.map(e => (
             <li class="relative ps-6 pb-6 last:pb-0">
@@ -260,26 +282,28 @@ const experience = [
             </a>
           </div>
           <ul class="mt-6 grid gap-4">
-            {posts.slice(0, postsConfig.perIndex).map(({ id, data, filePath }) => (
-              <li>
-                <a
-                  href={getPostUrl(id, filePath, locale)}
-                  class="border-border hover:border-accent block rounded-xl border p-5 transition"
-                >
-                  <h3 class="font-semibold">{data.title}</h3>
-                  <p class="text-muted-foreground mt-1 text-sm">
-                    {data.description}
-                  </p>
-                  <div class="mt-2 text-sm">
-                    <Datetime
-                      pubDatetime={data.pubDatetime}
-                      modDatetime={data.modDatetime}
-                      timezone={data.timezone}
-                    />
-                  </div>
-                </a>
-              </li>
-            ))}
+            {posts
+              .slice(0, postsConfig.perIndex)
+              .map(({ id, data, filePath }) => (
+                <li>
+                  <a
+                    href={getPostUrl(id, filePath, locale)}
+                    class="border-border hover:border-accent block rounded-xl border p-5 transition"
+                  >
+                    <h3 class="font-semibold">{data.title}</h3>
+                    <p class="text-muted-foreground mt-1 text-sm">
+                      {data.description}
+                    </p>
+                    <div class="mt-2 text-sm">
+                      <Datetime
+                        pubDatetime={data.pubDatetime}
+                        modDatetime={data.modDatetime}
+                        timezone={data.timezone}
+                      />
+                    </div>
+                  </a>
+                </li>
+              ))}
           </ul>
         </section>
       )
